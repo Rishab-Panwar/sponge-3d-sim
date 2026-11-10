@@ -52,13 +52,19 @@
   .stat .v span { color: var(--accent); }
   .stat .l { color: var(--muted); font-size: 13px; margin-top: 6px; }
 
-  /* ---- nav ---- */
-  nav.toc { position: sticky; top: 0; z-index: 5; background: rgba(8,12,20,0.82);
-            backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  nav.toc .wrap { display: flex; gap: 22px; overflow-x: auto; padding-top: 12px; padding-bottom: 12px; }
-  nav.toc a { font: 500 12px/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase;
-              color: var(--muted); text-decoration: none; white-space: nowrap; }
-  nav.toc a:hover { color: var(--ink); }
+  /* ---- nav: a compact, centred pill that sticks to the top ---- */
+  nav.toc { position: sticky; top: 12px; z-index: 5; padding: 0 16px; margin-top: 4px; }
+  nav.toc .wrap { width: fit-content; max-width: 100%; margin: 0 auto; display: flex; gap: 30px;
+                  overflow-x: auto; padding: 14px 30px; border-radius: 999px;
+                  background: rgba(8,12,20,0.82); border: 1px solid var(--line);
+                  backdrop-filter: blur(10px); box-shadow: 0 8px 30px rgba(0,0,0,0.35); scrollbar-width: none; }
+  nav.toc .wrap::-webkit-scrollbar { display: none; }
+  nav.toc a { font: 500 14px/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase;
+              color: var(--body); text-decoration: none; white-space: nowrap;
+              transition: color .18s ease, text-shadow .18s ease; }
+  nav.toc a:hover, nav.toc a:focus-visible { color: var(--accent); outline: none;
+              text-shadow: 0 0 10px rgba(255,121,0,0.85), 0 0 22px rgba(255,121,0,0.45); }
+  @media (max-width: 640px) { nav.toc .wrap { gap: 20px; padding: 12px 20px; } nav.toc a { font-size: 12px; } }
 
   /* ---- sections ---- */
   section { padding: 56px 0 8px; }

@@ -1,6 +1,18 @@
-# Learning a sponge's deformation from video
+<div align="center">
 
-A foam sponge strip, standing on its end, is pressed from the top with a phone and released. From slow-motion video of that interaction I fit a **3D mass-spring model** of the sponge: its **effective stiffness and damping** are read off the free sway after release, and the rest of its behaviour is fitted to the tracked marker dots. The fitted model is then used to **predict a press it has never seen** from the phone's motion alone, and that prediction is compared with the real video.
+<img width="200" height="200" alt="Sponge 3D Sim logo" src="assets/logo.png">
+
+# Sponge 3D Sim
+
+*Film a sponge. Fit its physics. Predict the next squish.*
+
+[Results](#results-at-a-glance) · [Pipeline](#pipeline) · [Quick Start](#quick-start) · [Approach](#approach) · [Limitations](#limitations-and-what-went-wrong-along-the-way)
+
+Sponge 3D Sim learns how a foam sponge deforms from **240 fps slow-motion video** of it being pressed and released. Tracked marker dots and the presser's motion drive a **3D mass-spring model** with volume preservation, **Rayleigh damping** and **frictional contact**. Its **effective stiffness and damping** are read off the sponge's free sway after release (**13.1 Hz**, damping ratio **0.12**), and its bending and friction are fitted to the dot trajectories. The fitted model then **predicts presses it has never seen** from the presser's motion alone, to within **0.34 / 0.36 cm** on two held-out videos. Everything is scripted, from tracking to the demo videos and an **interactive 3D viewer**, and runs on a laptop CPU.
+
+**Live:** [rishab-panwar.github.io/sponge-3d-sim](https://rishab-panwar.github.io/sponge-3d-sim/)
+
+</div>
 
 | | |
 |---|---|
@@ -10,8 +22,6 @@ A foam sponge strip, standing on its end, is pressed from the top with a phone a
 | Model | 3D mass-spring grid (3 × 11 × 4 nodes) with tetrahedral volume preservation, Rayleigh damping, phone as a moving rigid plate with Coulomb friction |
 | Fitted | Sway frequency **13.14 Hz**, damping ratio **0.116** (from the video); shear/axial ratio, friction and material damping (from the dot trajectories) |
 | Test (2 unseen presses) | Dot error **0.34 cm** (clip 4) and **0.36 cm** (clip 5) RMS, dots move up to ~4 cm; predicted sway 13.14 Hz vs **13.47 / 12.84 Hz** measured |
-
-**Results page (demo videos, 3D viewer, plots and comparisons): https://rishab-panwar.github.io/sponge-3d-sim/**
 
 **Demo:** [`results/demo/clip4.mp4`](results/demo/clip4.mp4) and [`results/demo/clip5.mp4`](results/demo/clip5.mp4) are the held-out test clips: the real video with the simulated front face drawn on top, the 3D simulation next to it, and live real-vs-simulated traces (8× slow motion). An interactive 3D viewer is in [`results/viewer/index.html`](results/viewer/index.html) (open it in a browser).
 
