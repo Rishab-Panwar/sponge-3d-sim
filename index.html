@@ -10,55 +10,51 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f5f3ee; --surface: #f9f8f4; --tint: #eae7e0; --ink: #17191d; --body: #535650;
-    --muted: #64665f; --line: #d6d2c9; --accent: #ff7900; --accent-ink: #17191d;
-    --hero: #0a101a; --hero-ink: #e1e3e6; --hero-muted: #aeb4bd; --hero-line: #1e2733;
-    --fit: #383b36; --test: #ff7900; --stress: #8d9186; --code: #eae7e0;
+    color-scheme: dark;
+    --ink: #f1f2f4; --body: #c6cbd2; --muted: #9aa1ab; --line: rgba(174,180,189,0.22);
+    --panel: rgba(16,22,32,0.78); --panel-strong: rgba(13,19,28,0.9); --tint: rgba(255,255,255,0.05);
+    --accent: #ff7900; --accent-ink: #17191d;
+    --fit: #c9ccc4; --test: #ff7900; --stress: #7d838c; --code: rgba(255,255,255,0.08);
     --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-data: "DM Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0d131c; --surface: #131b26; --tint: #1a2330; --ink: #e8eaed; --body: #c3c8cf;
-      --muted: #9aa1ab; --line: #263142; --code: #1a2330; --fit: #c9ccc4; --stress: #6f756c;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0d131c; --surface: #131b26; --tint: #1a2330; --ink: #e8eaed; --body: #c3c8cf;
-    --muted: #9aa1ab; --line: #263142; --code: #1a2330; --fit: #c9ccc4; --stress: #6f756c;
-  }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { margin: 0; background: var(--bg); color: var(--body); font: 16px/1.65 var(--font-body);
-         -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; background: #0a0f17; }
+  body { margin: 0; background: transparent; color: var(--body); font: 16px/1.65 var(--font-body);
+         -webkit-font-smoothing: antialiased; position: relative; }
+  /* Mars backdrop (assets/mars_scene.html), dimmed so the content stays readable */
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(8,12,20,0.58) 0%, rgba(8,12,20,0.78) 38%, rgba(8,12,20,0.88) 100%),
+                url("assets/mars_bg.jpg") center 35% / cover no-repeat; }
   .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
   h1, h2, h3 { color: var(--ink); letter-spacing: -0.025em; }
   .eyebrow { font: 500 12px/1.2 var(--font-data); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
   a { color: inherit; }
 
   /* ---- hero ---- */
-  header.hero { background: var(--hero); color: var(--hero-ink); padding: 64px 0 40px; }
+  header.hero { padding: 72px 0 44px; }
   header.hero h1 { color: #fff; font-size: clamp(30px, 5vw, 54px); line-height: 1.05; font-weight: 600;
-                   margin: 14px 0 18px; max-width: 900px; letter-spacing: -0.035em; }
+                   margin: 14px 0 18px; max-width: 900px; letter-spacing: -0.035em; text-shadow: 0 2px 24px rgba(0,0,0,.35); }
   header.hero h1 em { font-style: normal; color: var(--accent); }
-  .lede { font-size: 18px; color: var(--hero-muted); max-width: 760px; margin: 0; }
-  .lede b { color: var(--hero-ink); font-weight: 600; }
+  .lede { font-size: 18px; color: #d3d7dd; max-width: 760px; margin: 0; }
+  .lede b { color: #fff; font-weight: 600; }
   .links { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
   .btn { display: inline-block; padding: 10px 16px; border-radius: 999px; text-decoration: none;
-         font: 500 14px/1 var(--font-body); border: 1px solid var(--hero-line); color: var(--hero-ink); }
-  .btn:hover { border-color: var(--hero-muted); }
+         font: 500 14px/1 var(--font-body); border: 1px solid var(--line); color: var(--ink);
+         background: rgba(13,19,28,0.5); backdrop-filter: blur(6px); }
+  .btn:hover { border-color: var(--muted); }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
   .btn.primary:hover { filter: brightness(1.06); }
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px;
-           margin-top: 40px; background: var(--hero-line); border: 1px solid var(--hero-line); border-radius: 14px; overflow: hidden; }
-  .stat { background: var(--hero); padding: 18px 18px 16px; }
+           margin-top: 40px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .stat { background: var(--panel-strong); padding: 18px 18px 16px; }
   .stat .v { font: 500 26px/1.15 var(--font-data); color: #fff; letter-spacing: -0.02em; }
   .stat .v span { color: var(--accent); }
-  .stat .l { color: var(--hero-muted); font-size: 13px; margin-top: 6px; }
+  .stat .l { color: var(--muted); font-size: 13px; margin-top: 6px; }
 
   /* ---- nav ---- */
-  nav.toc { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 90%, transparent);
-            backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  nav.toc { position: sticky; top: 0; z-index: 5; background: rgba(8,12,20,0.82);
+            backdrop-filter: blur(10px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   nav.toc .wrap { display: flex; gap: 22px; overflow-x: auto; padding-top: 12px; padding-bottom: 12px; }
   nav.toc a { font: 500 12px/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase;
               color: var(--muted); text-decoration: none; white-space: nowrap; }
@@ -74,7 +70,8 @@
   p.sub b { color: var(--ink); font-weight: 600; }
   .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
   .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
-  .card, figure { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 0; }
+  .card, figure { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 0;
+                  backdrop-filter: blur(8px); }
   figure { margin-bottom: 18px; }
   .cap, figcaption { padding: 12px 16px 14px; font-size: 14px; color: var(--muted); }
   .cap b, figcaption b { color: var(--ink); font-weight: 600; }
@@ -83,20 +80,20 @@
   .tag { display: inline-block; font: 500 11px/1.6 var(--font-data); letter-spacing: .06em; text-transform: uppercase;
          padding: 0 8px; border-radius: 999px; margin-right: 8px; vertical-align: 1px; }
   .tag.test { background: var(--test); color: #17191d; }
-  .tag.fit { background: var(--fit); color: var(--bg); }
+  .tag.fit { background: var(--fit); color: #17191d; }
   .tag.stress { background: var(--stress); color: #fff; }
-  .viewer { display: block; width: 100%; height: min(80vh, 780px); border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+  .viewer { display: block; width: 100%; height: min(80vh, 780px); border: 1px solid var(--line); border-radius: 14px;
+            background: transparent; }
   .viewer-note { font: 500 12px/1.4 var(--font-data); color: var(--muted); margin-top: 10px; }
   .viewer-note a { color: var(--accent); }
 
-  table { width: 100%; border-collapse: collapse; background: var(--surface); }
-  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; margin-top: 18px; }
+  table { width: 100%; border-collapse: collapse; background: var(--panel); }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; margin-top: 18px; backdrop-filter: blur(8px); }
   th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); font-size: 15px; }
   tr:last-child td { border-bottom: 0; }
   th { font: 500 11px/1 var(--font-data); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--tint); }
   td.num, th.num { text-align: right; font-family: var(--font-data); font-size: 14px; }
   tr.test td { color: var(--ink); }
-  tr.test td.num:first-of-type { font-weight: 500; }
 
   ol.steps, ul.steps { padding-left: 20px; max-width: 840px; }
   ol.steps li, ul.steps li { margin-bottom: 10px; }
@@ -105,8 +102,9 @@
   code { font: 13px var(--font-data); background: var(--code); padding: 2px 6px; border-radius: 6px; }
   .note { border-left: 2px solid var(--accent); padding: 4px 16px; color: var(--muted); max-width: 840px; }
   .note a { color: var(--ink); }
-  footer { margin-top: 64px; background: var(--hero); color: var(--hero-muted); padding: 32px 0 44px; font-size: 14px; }
-  footer a { color: var(--hero-ink); }
+  footer { margin-top: 64px; background: rgba(8,12,20,0.9); color: var(--muted); padding: 32px 0 44px; font-size: 14px;
+           border-top: 1px solid var(--line); }
+  footer a { color: var(--ink); }
   footer .eyebrow { display: block; margin-bottom: 8px; }
 </style>
 </head>
@@ -141,8 +139,8 @@
 <section id="viewer">
   <div class="eyebrow">01 · Interactive</div>
   <h2>The fitted 3D model</h2>
-  <p class="sub">Drag to rotate, scroll to zoom, scrub the time line and switch clips. <b>Orange</b>: real tracked dots. <b>Blue</b>: dots predicted by the model. <b>Grey slab</b>: the phone, moving exactly as tracked. (The Mars-like terrain and rover are just scenery.)</p>
-  <iframe class="viewer" src="results/viewer/index.html" title="Interactive 3D viewer of the simulated sponge" loading="lazy"></iframe>
+  <p class="sub">Drag to rotate, scroll to zoom, scrub the time line and switch clips. <b>Orange</b>: real tracked dots. <b>Blue</b>: dots predicted by the model. <b>Grey slab</b>: the phone, moving exactly as tracked. </p>
+  <iframe class="viewer" allowtransparency="true" src="results/viewer/index.html?embed=1" title="Interactive 3D viewer of the simulated sponge" loading="lazy"></iframe>
   <div class="viewer-note"><a href="results/viewer/index.html">Open the viewer full screen →</a></div>
 </section>
 
