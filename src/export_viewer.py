@@ -26,6 +26,8 @@ def main():
         cfg = {k: v for k, v in json.load(f).items() if not k.startswith("_")}
     with open(os.path.join(ROOT, "results", "fit_params.json")) as f:
         fitres = json.load(f)
+    ev_path = os.path.join(ROOT, "results", "evaluation.json")
+    evaluation = json.load(open(ev_path)) if os.path.exists(ev_path) else {}
     out = {"params": fitres["params"], "effective": fitres.get("effective", {}), "clips": {}}
     for name, c in cfg.items():
         clip = load_clip(name)
@@ -36,8 +38,9 @@ def main():
         role = c.get("role")
         if role == "fit" and not c.get("use_trajectory", True):
             role = "stress test"
-        stats = (fitres.get("test", {}).get(name) or fitres.get("fit", {}).get(name)
-                 or fitres.get("stress_test", {}).get(name) or {})
+        # current scores (evaluate.py) take precedence over the ones saved by the fit
+        stats = (evaluation.get(name) or fitres.get("test", {}).get(name)
+                 or fitres.get("fit", {}).get(name) or fitres.get("stress_test", {}).get(name) or {})
         out["clips"][name] = {
             "role": role,
             "rms_cm": stats.get("rms_cm"),

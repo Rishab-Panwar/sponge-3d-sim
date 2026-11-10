@@ -72,6 +72,7 @@
   h3.label { font: 500 12px/1 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
   p.sub { margin: 0 0 22px; max-width: 800px; }
   p.sub b { color: var(--ink); font-weight: 600; }
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
   .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
   .card, figure { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 0; }
   figure { margin-bottom: 18px; }
@@ -131,7 +132,7 @@
 </header>
 
 <nav class="toc"><div class="wrap">
-  <a href="#viewer">3D viewer</a><a href="#demos">Demo videos</a><a href="#results">Results</a>
+  <a href="#viewer">3D viewer</a><a href="#demos">Demo videos</a><a href="#object">The sponge</a><a href="#results">Results</a>
   <a href="#fit">Stiffness &amp; damping</a><a href="#compare">Comparisons</a><a href="#method">Method</a><a href="#limits">Limitations</a>
 </div></nav>
 
@@ -140,7 +141,7 @@
 <section id="viewer">
   <div class="eyebrow">01 · Interactive</div>
   <h2>The fitted 3D model</h2>
-  <p class="sub">Drag to rotate, scroll to zoom, scrub the time line and switch clips. <b>Orange</b>: real tracked dots. <b>Blue</b>: dots predicted by the model. <b>Grey slab</b>: the phone, moving exactly as tracked.</p>
+  <p class="sub">Drag to rotate, scroll to zoom, scrub the time line and switch clips. <b>Orange</b>: real tracked dots. <b>Blue</b>: dots predicted by the model. <b>Grey slab</b>: the phone, moving exactly as tracked. (The Mars-like terrain and rover are just scenery.)</p>
   <iframe class="viewer" src="results/viewer/index.html" title="Interactive 3D viewer of the simulated sponge" loading="lazy"></iframe>
   <div class="viewer-note"><a href="results/viewer/index.html">Open the viewer full screen →</a></div>
 </section>
@@ -179,8 +180,19 @@
   </div>
 </section>
 
+<section id="object">
+  <div class="eyebrow">03 · The object</div>
+  <h2>The sponge and how it was measured</h2>
+  <p class="sub">A foam strip cut from a kitchen sponge, standing on its end with its base taped to the table. Measured with a ruler: <b>9.5 cm tall, 2.0 cm wide</b> (the face the camera sees, with 5 × 2 ink dots) and <b>7.4 cm deep</b> (toward the camera). Each video is scaled to centimetres from the sponge's resting height, and the depth (invisible in the video) sizes the 3D model.</p>
+  <div class="grid3">
+    <figure><img src="assets/size_height.jpg" alt="Sponge next to a ruler showing a height of 9.5 cm" loading="lazy"><figcaption><b>Height · 9.5 cm</b>. The dotted face the camera sees.</figcaption></figure>
+    <figure><img src="assets/size_width.jpg" alt="Sponge under a ruler showing a width of 2 cm" loading="lazy"><figcaption><b>Width · 2.0 cm</b>. The bending direction in the videos.</figcaption></figure>
+    <figure><img src="assets/size_depth.jpg" alt="Sponge under a ruler showing a depth of about 7.4 cm" loading="lazy"><figcaption><b>Depth · 7.4 cm</b>. Toward the camera; not visible in the videos.</figcaption></figure>
+  </div>
+</section>
+
 <section id="results">
-  <div class="eyebrow">03 · Accuracy</div>
+  <div class="eyebrow">04 · Accuracy</div>
   <h2>Results</h2>
   <p class="sub">RMS distance between simulated and tracked dots, over every frame of each clip. The simulation only receives the phone's tracked height, tilt and sideways motion, plus the sponge's shape in the frames before contact.</p>
   <figure>
@@ -209,7 +221,7 @@
 </section>
 
 <section id="fit">
-  <div class="eyebrow">04 · From video to parameters</div>
+  <div class="eyebrow">05 · From video to parameters</div>
   <h2>How the video sets stiffness and damping</h2>
   <p class="sub">The video gives positions, never forces. The cleanest dynamic signal is the sway right after the phone lets go: the top of the strip swings sideways a few times and settles. A damped sine fits it in every clip. Its <b>frequency</b> sets the stiffness (relative to mass) and its <b>decay</b> sets the damping. The model is tuned so that a virtual "pluck" sways the same way.</p>
   <figure>
@@ -223,7 +235,7 @@
 </section>
 
 <section id="compare">
-  <div class="eyebrow">05 · Checks</div>
+  <div class="eyebrow">06 · Checks</div>
   <h2>Comparisons</h2>
   <div class="grid2">
     <figure>
@@ -238,10 +250,10 @@
 </section>
 
 <section id="method">
-  <div class="eyebrow">06 · Pipeline</div>
+  <div class="eyebrow">07 · Pipeline</div>
   <h2>Method</h2>
   <ol class="steps">
-    <li><b>Capture.</b> 5 presses filmed at 240 fps from the side, 10 ink dots on the sponge's visible face, sponge measured with a ruler (9.5 × 2 × 7.4 cm).</li>
+    <li><b>Capture.</b> 5 presses filmed at 240 fps from the side, 10 ink dots on the sponge's visible face, sponge measured with a ruler (9.5 × 2 × 7.4 cm, <a href="#object">photos</a>).</li>
     <li><b>Tracking</b> (OpenCV). Dots found by local darkness and followed with optical flow; the phone's edge gives its height, tilt and sideways position; camera drift (up to 0.9 cm) is measured on the static base and removed.</li>
     <li><b>3D model.</b> 3 × 11 × 4 point masses joined by springs, with a volume-preserving term so cells cannot turn inside out, Rayleigh damping, the phone as a moving plate with friction, gravity, and the sponge's measured starting bow (which decides which way it buckles).</li>
     <li><b>Fit, stage A.</b> Stiffness and damping chosen so the model sways like the video (13.1 Hz, damping ratio 0.12).</li>
@@ -252,7 +264,7 @@
 </section>
 
 <section id="limits">
-  <div class="eyebrow">07 · Honest scope</div>
+  <div class="eyebrow">08 · Honest scope</div>
   <h2>Limitations</h2>
   <ul class="steps">
     <li><b>Stiffness is per unit mass.</b> Video gives no forces, so stiffness and mass cannot be separated; weighing the sponge would give N/m.</li>
