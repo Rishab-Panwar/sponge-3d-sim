@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sponge 3D Sim</title>
+<meta name="description" content="A 3D deformation model of a foam sponge, with stiffness and damping fitted from slow-motion video and tested on unseen presses.">
+<style>
+  :root {
+    --bg: #fafaf8; --surface: #ffffff; --ink: #1d1d1f; --muted: #5f6368; --line: #e3e3df;
+    --accent: #c98a00; --fit: #4C78A8; --test: #E45756; --stress: #8a8a8a; --code: #f2f2ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141518; --surface: #1d1f23; --ink: #ececec; --muted: #a4a8ae; --line: #2f3238;
+      --accent: #f2b701; --code: #26282d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141518; --surface: #1d1f23; --ink: #ececec; --muted: #a4a8ae; --line: #2f3238;
+    --accent: #f2b701; --code: #26282d;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  header.hero { padding: 48px 0 28px; border-bottom: 1px solid var(--line); }
+  .kicker { color: var(--accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: 13px; }
+  h1 { font-size: clamp(28px, 4.5vw, 42px); line-height: 1.15; margin: 8px 0 12px; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 760px; margin: 0; }
+  .links { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn { display: inline-block; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line);
+         background: var(--surface); color: var(--ink); text-decoration: none; font-size: 14px; }
+  .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  nav.toc { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent);
+            backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+  nav.toc .wrap { display: flex; gap: 18px; overflow-x: auto; padding-top: 10px; padding-bottom: 10px; }
+  nav.toc a { color: var(--muted); text-decoration: none; font-size: 14px; white-space: nowrap; }
+  nav.toc a:hover { color: var(--ink); }
+  section { padding: 40px 0 8px; }
+  h2 { font-size: 24px; margin: 0 0 6px; }
+  h3 { font-size: 17px; margin: 22px 0 6px; }
+  p.sub { color: var(--muted); margin: 0 0 18px; max-width: 780px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-top: 26px; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .stat .v { font-size: 26px; font-weight: 700; line-height: 1.2; }
+  .stat .l { color: var(--muted); font-size: 13px; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .card .cap { padding: 10px 14px 12px; font-size: 14px; color: var(--muted); }
+  .card .cap b { color: var(--ink); }
+  video, .card img, figure img { display: block; width: 100%; height: auto; background: #000; }
+  figure { margin: 0 0 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  figure img { background: #fff; }
+  figcaption { padding: 10px 14px 12px; font-size: 14px; color: var(--muted); }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; color: #fff; margin-right: 6px; }
+  .tag.test { background: var(--test); } .tag.fit { background: var(--fit); } .tag.stress { background: var(--stress); }
+  .viewer { width: 100%; height: min(78vh, 760px); border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: var(--surface);
+          border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+  th { font-size: 13px; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.test td { font-weight: 600; }
+  .tablewrap { overflow-x: auto; }
+  ol.steps { padding-left: 20px; max-width: 820px; }
+  ol.steps li { margin-bottom: 8px; }
+  code { background: var(--code); padding: 1px 6px; border-radius: 5px; font-size: 14px; }
+  .note { border-left: 3px solid var(--accent); padding: 4px 14px; color: var(--muted); max-width: 820px; }
+  footer { margin-top: 48px; padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  footer a, .sub a, .note a, ol.steps a { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Learning a deformable object from video</div>
+    <h1>A foam sponge, modelled in 3D from slow-motion video</h1>
+    <p class="lede">A sponge strip is pressed from the top with a phone and released. From 240 fps video I fit a 3D mass-spring model: its stiffness and damping are read off the sponge's free sway after release, and its bending and friction from the tracked marker dots. The fitted model then <b>predicts presses it has never seen</b>, from the phone's motion alone.</p>
+    <div class="links">
+      <a class="btn primary" href="#viewer">Open the 3D viewer</a>
+      <a class="btn" href="#demos">Watch the demos</a>
+      <a class="btn" href="https://github.com/Rishab-Panwar/sponge-3d-sim">Code &amp; README on GitHub</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v">0.34 / 0.36 cm</div><div class="l">prediction error on the 2 unseen test presses (dots move up to ~4 cm)</div></div>
+      <div class="stat"><div class="v">13.1 Hz</div><div class="l">sway frequency fitted from video; tests measure 13.5 and 12.8 Hz</div></div>
+      <div class="stat"><div class="v">3 fit / 2 test</div><div class="l">videos used to fit the model / held out to test it</div></div>
+      <div class="stat"><div class="v">132 nodes</div><div class="l">3D grid, 9.5 × 2 × 7.4 cm, driven only by the tracked phone motion</div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="wrap">
+  <a href="#demos">Demo videos</a><a href="#viewer">3D viewer</a><a href="#results">Results</a>
+  <a href="#fit">How the video sets the model</a><a href="#compare">Comparisons</a><a href="#method">Method</a><a href="#limits">Limitations</a>
+</div></nav>
+
+<main class="wrap">
+
+<section id="demos">
+  <h2>Demo videos</h2>
+  <p class="sub">Each video (8× slow motion) shows, on the left, the real video with the model's front face drawn on top (blue mesh): orange circles are the real ink dots, blue crosses are where the model predicts them. On the right is the 3D model under the phone plate. The strip at the bottom plots the top dot's position over time, real (thick) vs simulated (thin).</p>
+
+  <h3>Unseen test presses</h3>
+  <div class="grid2">
+    <div class="card">
+      <video controls muted playsinline preload="metadata" src="results/web/clip4.mp4"></video>
+      <div class="cap"><span class="tag test">test</span><b>Clip 4</b>: error 0.34 cm. Never used in fitting.</div>
+    </div>
+    <div class="card">
+      <video controls muted playsinline preload="metadata" src="results/web/clip5.mp4"></video>
+      <div class="cap"><span class="tag test">test</span><b>Clip 5</b>: error 0.36 cm. Recorded after the model was fitted.</div>
+    </div>
+  </div>
+
+  <h3>Fitting clips</h3>
+  <div class="grid2">
+    <div class="card">
+      <video controls muted playsinline preload="metadata" src="results/web/clip1.mp4"></video>
+      <div class="cap"><span class="tag fit">fit</span><b>Clip 1</b>: error 0.46 cm.</div>
+    </div>
+    <div class="card">
+      <video controls muted playsinline preload="metadata" src="results/web/clip2.mp4"></video>
+      <div class="cap"><span class="tag fit">fit</span><b>Clip 2</b>: error 0.28 cm.</div>
+    </div>
+    <div class="card">
+      <video controls muted playsinline preload="metadata" src="results/web/clip3.mp4"></video>
+      <div class="cap"><span class="tag stress">stress test</span><b>Clip 3</b>: error 0.46 cm. The sponge folds onto itself, which the model cannot represent (no self-contact), so its dot motion was not used for fitting; only its sway was.</div>
+    </div>
+  </div>
+</section>
+
+<section id="viewer">
+  <h2>Interactive 3D viewer</h2>
+  <p class="sub">Drag to rotate, scroll to zoom, scrub the time line, switch clips. Orange: real dots; blue: simulated dots; grey slab: the phone. <a href="results/viewer/index.html">Open full screen</a>.</p>
+  <iframe class="viewer" src="results/viewer/index.html" title="Interactive 3D viewer of the simulated sponge" loading="lazy"></iframe>
+</section>
+
+<section id="results">
+  <h2>Results</h2>
+  <p class="sub">RMS distance between simulated and tracked dots, over every frame of each clip. The simulation only receives the phone's tracked height, tilt and sideways motion, plus the sponge's shape in the frames before contact.</p>
+  <figure>
+    <img src="results/plots/errors_per_clip.png" alt="Bar chart of prediction error per clip, while pressing and after release">
+    <figcaption>Error while the phone presses and in the first 0.25 s after release. The test clips (red) are about as good as the fitting clips (blue).</figcaption>
+  </figure>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Clip</th><th>Role</th><th class="num">Overall</th><th class="num">Pressing</th><th class="num">After release</th><th class="num">Measured sway</th></tr></thead>
+    <tbody>
+      <tr><td>clip1</td><td><span class="tag fit">fit</span></td><td class="num">0.46 cm</td><td class="num">0.53</td><td class="num">0.25</td><td class="num">13.2 Hz, ζ 0.14</td></tr>
+      <tr><td>clip2</td><td><span class="tag fit">fit</span></td><td class="num">0.28 cm</td><td class="num">0.30</td><td class="num">0.17</td><td class="num">13.8 Hz, ζ 0.12</td></tr>
+      <tr><td>clip3</td><td><span class="tag stress">stress test</span></td><td class="num">0.46 cm</td><td class="num">0.50</td><td class="num">0.29</td><td class="num">13.0 Hz, ζ 0.11</td></tr>
+      <tr class="test"><td>clip4</td><td><span class="tag test">test</span></td><td class="num">0.34 cm</td><td class="num">0.38</td><td class="num">0.22</td><td class="num">13.5 Hz, ζ 0.17</td></tr>
+      <tr class="test"><td>clip5</td><td><span class="tag test">test</span></td><td class="num">0.36 cm</td><td class="num">0.38</td><td class="num">0.28</td><td class="num">12.8 Hz, ζ 0.22</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>All dots over time</h3>
+  <div class="grid2">
+    <figure><img src="results/plots/clip4_traces.png" alt="Clip 4 dot positions over time, real vs simulated"><figcaption><span class="tag test">test</span>Clip 4: solid = real, dashed = simulated, red line = release.</figcaption></figure>
+    <figure><img src="results/plots/clip5_traces.png" alt="Clip 5 dot positions over time, real vs simulated"><figcaption><span class="tag test">test</span>Clip 5.</figcaption></figure>
+    <figure><img src="results/plots/clip1_traces.png" alt="Clip 1 dot positions over time"><figcaption><span class="tag fit">fit</span>Clip 1.</figcaption></figure>
+    <figure><img src="results/plots/clip2_traces.png" alt="Clip 2 dot positions over time"><figcaption><span class="tag fit">fit</span>Clip 2.</figcaption></figure>
+  </div>
+</section>
+
+<section id="fit">
+  <h2>How the video sets stiffness and damping</h2>
+  <p class="sub">The video gives positions, never forces. The cleanest dynamic signal is the sway right after the phone lets go: the top of the strip swings sideways a few times and settles. A damped sine fits it in every clip. Its <b>frequency</b> sets the stiffness (relative to mass) and its <b>decay</b> sets the damping. The model is tuned so that a virtual "pluck" sways the same way.</p>
+  <figure>
+    <img src="results/plots/sway_fit.png" alt="Measured sway after release with damped-sine fits for all five clips">
+    <figcaption>Sideways position of the top dots after release (black) and the damped-sine fit (red), for all five clips.</figcaption>
+  </figure>
+  <figure>
+    <img src="results/plots/sway_comparison.png" alt="Measured sway frequency and damping per clip vs the fitted model">
+    <figcaption>The model's sway (dashed), fitted from clips 1–3, against what each clip shows. Frequency agrees within ~4 % on the unseen clips. The test clips swing with more damping than the fitted average, so the model rings slightly longer after release.</figcaption>
+  </figure>
+</section>
+
+<section id="compare">
+  <h2>Comparisons</h2>
+  <div class="grid2">
+    <figure>
+      <img src="results/plots/model_2d_vs_3d.png" alt="2D vs 3D model error per clip">
+      <figcaption><b>2D vs 3D.</b> A 2D side-view model (the development model) is about as good on the ordinary presses, but fails on the self-folding clip 3 (1.59 cm vs 0.46 cm).</figcaption>
+    </figure>
+    <figure>
+      <img src="results/plots/robustness.png" alt="Error when each parameter is changed by plus or minus 5 percent">
+      <figcaption><b>Robustness.</b> Changing any fitted parameter by ±5 % moves every clip's error by at most 0.01 cm. (The 2D model was less stable: clip 1 switched buckling direction in 3 of 10 such tests.)</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="method">
+  <h2>Method</h2>
+  <ol class="steps">
+    <li><b>Capture.</b> 5 presses filmed at 240 fps from the side, 10 ink dots on the sponge's visible face, sponge measured with a ruler (9.5 × 2 × 7.4 cm).</li>
+    <li><b>Tracking</b> (OpenCV). Dots found by local darkness and followed with optical flow; the phone's edge gives its height, tilt and sideways position; camera drift (up to 0.9 cm) is measured on the static base and removed.</li>
+    <li><b>3D model.</b> 3 × 11 × 4 point masses joined by springs, with a volume-preserving term so cells cannot turn inside out, Rayleigh damping, the phone as a moving plate with friction, gravity, and the sponge's measured starting bow (which decides which way it buckles).</li>
+    <li><b>Fit, stage A.</b> Stiffness and damping chosen so the model sways like the video (13.1 Hz, damping ratio 0.12).</li>
+    <li><b>Fit, stage B.</b> Shear/axial stiffness ratio, friction and material damping fitted to the dot trajectories of clips 1–2.</li>
+    <li><b>Test.</b> Clips 4 and 5 predicted from the phone's motion alone and compared with the tracked dots.</li>
+  </ol>
+  <p class="note">Full details, assumptions, run instructions and credits are in the <a href="https://github.com/Rishab-Panwar/sponge-3d-sim#readme">README</a>. Everything is scripted and was re-run from a clean copy of the repository.</p>
+</section>
+
+<section id="limits">
+  <h2>Limitations</h2>
+  <ul class="steps">
+    <li><b>Stiffness is per unit mass.</b> Video gives no forces, so stiffness and mass cannot be separated; weighing the sponge would give N/m.</li>
+    <li><b>Linear, uniform foam; no self-contact; no slow creep.</b> Folding onto itself (clip 3) and the slow creep back over seconds are outside the model.</li>
+    <li><b>Damping varies between takes</b> (0.11–0.22); one fitted value is an average.</li>
+    <li><b>Small test set</b> (2 unseen presses), and the parameters were fitted before camera-drift compensation was added (errors on the fitting clips barely changed, so the model was not refitted).</li>
+  </ul>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  Rishab Panwar · Take-home assignment, Research Engineer Intern ·
+  <a href="https://github.com/Rishab-Panwar/sponge-3d-sim">github.com/Rishab-Panwar/sponge-3d-sim</a><br>
+  Built with OpenCV, NumPy, SciPy, Numba, Matplotlib and three.js. Developed with the help of Claude Code (Anthropic).
+</div></footer>
+
+</body>
+</html>

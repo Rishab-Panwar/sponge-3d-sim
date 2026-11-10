@@ -11,6 +11,8 @@ A foam sponge strip, standing on its end, is pressed from the top with a phone a
 | Fitted | Sway frequency **13.14 Hz**, damping ratio **0.116** (from the video); shear/axial ratio, friction and material damping (from the dot trajectories) |
 | Test (2 unseen presses) | Dot error **0.34 cm** (clip 4) and **0.36 cm** (clip 5) RMS, dots move up to ~4 cm; predicted sway 13.14 Hz vs **13.47 / 12.84 Hz** measured |
 
+**Results page (demo videos, 3D viewer, plots and comparisons): https://rishab-panwar.github.io/sponge-3d-sim/**
+
 **Demo:** [`results/demo/clip4.mp4`](results/demo/clip4.mp4) and [`results/demo/clip5.mp4`](results/demo/clip5.mp4) are the held-out test clips: the real video with the simulated front face drawn on top, the 3D simulation next to it, and live real-vs-simulated traces (8× slow motion). An interactive 3D viewer is in [`results/viewer/index.html`](results/viewer/index.html) (open it in a browser).
 
 ## Results at a glance
@@ -68,6 +70,7 @@ python wobble.py            # measured sway per clip -> results/wobble_measured.
 python fit.py               # fit the 3D model -> results/fit_params.json              (~1 h, 1 core)
 python render.py            # demo videos + plots -> results/demo/, results/plots/     (~5 min)
 python export_viewer.py     # interactive viewer data -> results/viewer/data.js
+python make_page.py         # comparison charts + web (H.264) videos for index.html (the results page)
 ```
 
 Every step reads the previous step's output, and all outputs are committed, so any step can be run on its own. For example, `python render.py clip4` re-renders the test clip from the committed parameters without refitting.
