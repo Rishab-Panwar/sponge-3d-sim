@@ -1,0 +1,56 @@
+{
+  "_model_sway": {
+    "f_n_hz": 13.139612553385104,
+    "zeta": 0.11642228986915207
+  },
+  "clip1": {
+    "rms_cm": 0.4606040379482609,
+    "rms_cm_pressing": 0.5260754725382242,
+    "rms_cm_free_recovery": 0.2541223336370695,
+    "rms_cm_after_release": 0.1968803178611687,
+    "max_cm": 1.5808185911533172,
+    "measured_sway_hz": 13.204102540563074,
+    "measured_damping_ratio": 0.1390891397936684,
+    "role": "fit"
+  },
+  "clip2": {
+    "rms_cm": 0.28349117332412765,
+    "rms_cm_pressing": 0.3015330924944704,
+    "rms_cm_free_recovery": 0.1701548983697896,
+    "rms_cm_after_release": 0.1689536065010718,
+    "max_cm": 0.9059466881473072,
+    "measured_sway_hz": 13.835768702767533,
+    "measured_damping_ratio": 0.12142300447553757,
+    "role": "fit"
+  },
+  "clip3": {
+    "rms_cm": 0.4647531619002416,
+    "rms_cm_pressing": 0.5012332414856496,
+    "rms_cm_free_recovery": 0.29287306986337014,
+    "rms_cm_after_release": 0.2763909459240913,
+    "max_cm": 1.1254950326154585,
+    "measured_sway_hz": 13.031474916920644,
+    "measured_damping_ratio": 0.10808537462912313,
+    "role": "fit"
+  },
+  "clip4": {
+    "rms_cm": 0.3409159397819485,
+    "rms_cm_pressing": 0.3816118869360366,
+    "rms_cm_free_recovery": 0.22354961981142124,
+    "rms_cm_after_release": 0.19999179510650958,
+    "max_cm": 0.9537892729548298,
+    "measured_sway_hz": 13.471385681704758,
+    "measured_damping_ratio": 0.1652552058698445,
+    "role": "test"
+  },
+  "clip5": {
+    "rms_cm": 0.35536346227279786,
+    "rms_cm_pressing": 0.37991030331853626,
+    "rms_cm_free_recovery": 0.2807834205504117,
+    "rms_cm_after_release": 0.257945616249379,
+    "max_cm": 1.1943888692041544,
+    "measured_sway_hz": 12.84209439115857,
+    "measured_damping_ratio": 0.2207229823078884,
+    "role": "test"
+  }
+}

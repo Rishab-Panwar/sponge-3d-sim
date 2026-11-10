@@ -1,0 +1,14 @@
+wobble (stage A): ['clip1', 'clip2', 'clip3']  trajectories (stage B): ['clip1', 'clip2']  stress test: ['clip3']  test: ['clip4']
+targets from video: f_n = 13.14 Hz, zeta = 0.116  (clip1 13.2 Hz / 0.14, clip2 13.5 Hz / 0.08, clip3 13.0 Hz / 0.11)
+[iter 0] stage A: k_axial 4.84e+04, alpha 17.69 1/s -> model wobble 13.14 Hz, zeta 0.116
+[iter 0] grid: best loss 0.2453 at ratio 0.50, mu 2.00, zeta 0.40 (106s)
+[iter 0] stage B: shear ratio 0.417, friction mu 1.63, material damping zeta 0.799, loss 0.2381 cm^2  (1821s)
+[iter 1] stage A: k_axial 5e+04, alpha 12.96 1/s -> model wobble 13.14 Hz, zeta 0.116
+[iter 1] stage B: shear ratio 0.417, friction mu 1.64, material damping zeta 0.798, loss 0.2381 cm^2  (3576s)
+final: Params(k_axial=50010.93609052269, k_shear=20870.960544730533, zeta=0.7984075974674946, mu=1.6415824816068865, alpha=12.957067349263058, k_base=0.0)
+model wobble 13.14 Hz / zeta 0.116; test clip4 measured 13.35 Hz / zeta 0.161
+[fit] clip1: rms 0.46 cm (pressing 0.52, free recovery 0.33, after release 0.25), max 1.68
+[fit] clip2: rms 0.26 cm (pressing 0.27, free recovery 0.16, after release 0.16), max 0.80
+[stress_test] clip3: rms 0.53 cm (pressing 0.55, free recovery 0.39, after release 0.41), max 1.19
+[test] clip4: rms 0.35 cm (pressing 0.39, free recovery 0.23, after release 0.21), max 1.07
+total 3605s

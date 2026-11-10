@@ -1,0 +1,81 @@
+{
+  "params": {
+    "k_axial": 226393.08357800712,
+    "k_shear": 112627.74265380437,
+    "zeta": 0.3716580975602673,
+    "mu": 0.5998169786851275,
+    "alpha": 17.158955845806343
+  },
+  "units": "per unit total mass: k in cm/s^2 per unit strain; zeta (spring dashpot ratio) and mu dimensionless; alpha in 1/s",
+  "effective": {
+    "wobble_frequency_hz": 13.139612553385627,
+    "wobble_damping_ratio": 0.11642228987031344,
+    "shear_to_axial_ratio": 0.49748755957465807
+  },
+  "targets_from_fit_clips": {
+    "f_n_hz": 13.139612553376367,
+    "zeta": 0.11642228986642052,
+    "per_clip": {
+      "clip1": {
+        "f_n_hz": 13.165129464133027,
+        "zeta": 0.13673489789421667,
+        "amplitude_cm": 0.1679901943625539
+      },
+      "clip2": {
+        "f_n_hz": 13.52311894662803,
+        "zeta": 0.07821947124485225,
+        "amplitude_cm": 0.05080930004785555
+      },
+      "clip3": {
+        "f_n_hz": 12.998755744231705,
+        "zeta": 0.10770469778991772,
+        "amplitude_cm": 0.1687691375865578
+      }
+    }
+  },
+  "test_clips_measured_wobble": {
+    "clip4": {
+      "f_n_hz": 13.349421866975941,
+      "zeta": 0.16097543176778933,
+      "amplitude_cm": 0.6143726920113158
+    }
+  },
+  "loss": {
+    "free_window_s": 0.25,
+    "w_free": 1.0
+  },
+  "fit": {
+    "clip1": {
+      "rms_cm": 0.4475673985216882,
+      "rms_cm_pressing": 0.5010564059187206,
+      "rms_cm_free_recovery": 0.32607653144781346,
+      "rms_cm_after_release": 0.253219881200934,
+      "max_cm": 1.744498365821191
+    },
+    "clip2": {
+      "rms_cm": 0.24975987974048167,
+      "rms_cm_pressing": 0.2642686072161826,
+      "rms_cm_free_recovery": 0.16010287357410383,
+      "rms_cm_after_release": 0.16051100877363453,
+      "max_cm": 0.8362553316183268
+    }
+  },
+  "stress_test": {
+    "clip3": {
+      "rms_cm": 1.5843331990956446,
+      "rms_cm_pressing": 1.0119391860652533,
+      "rms_cm_free_recovery": 2.86772414819181,
+      "rms_cm_after_release": 2.897826052654844,
+      "max_cm": 6.317613523856172
+    }
+  },
+  "test": {
+    "clip4": {
+      "rms_cm": 0.32659811288501445,
+      "rms_cm_pressing": 0.3625860442968589,
+      "rms_cm_free_recovery": 0.22921766813875802,
+      "rms_cm_after_release": 0.2058365557096868,
+      "max_cm": 1.053508797064364
+    }
+  }
+}

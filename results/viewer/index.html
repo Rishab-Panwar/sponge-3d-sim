@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sponge 3D Viewer</title>
+<style>
+  :root { --bg:#f4f4f2; --panel:#ffffff; --ink:#222; --muted:#666; --line:#ddd; --accent:#1f6feb; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg:#16181c; --panel:#1f2228; --ink:#e8e8e8; --muted:#9aa0a6; --line:#33373e; --accent:#58a6ff; }
+  }
+  :root[data-theme="dark"] { --bg:#16181c; --panel:#1f2228; --ink:#e8e8e8; --muted:#9aa0a6; --line:#33373e; --accent:#58a6ff; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.4 system-ui, sans-serif; }
+  header { padding:12px 16px; border-bottom:1px solid var(--line); background:var(--panel); }
+  header h1 { font-size:17px; margin:0 0 2px; }
+  header p { margin:0; color:var(--muted); font-size:13px; }
+  #view { width:100%; height:62vh; min-height:320px; display:block; }
+  .controls { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; padding:12px 16px;
+              background:var(--panel); border-top:1px solid var(--line); }
+  .controls label { color:var(--muted); font-size:13px; }
+  select, button { font:inherit; padding:5px 10px; border:1px solid var(--line); border-radius:6px;
+                   background:var(--bg); color:var(--ink); cursor:pointer; }
+  input[type=range] { flex:1 1 220px; min-width:160px; accent-color:var(--accent); }
+  .info { padding:10px 16px 16px; color:var(--muted); font-size:13px; }
+  .info b { color:var(--ink); }
+  .key span { display:inline-block; width:10px; height:10px; border-radius:50%; margin:0 4px 0 10px; vertical-align:middle; }
+  #err { padding:24px 16px; color:#c00; display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Sponge: fitted 3D deformation model</h1>
+  <p>3D mass-spring model, driven only by the tracked phone motion. Drag to rotate, scroll to zoom.</p>
+</header>
+<canvas id="view"></canvas>
+<div class="controls">
+  <label>Clip <select id="clip"></select></label>
+  <button id="play">Pause</button>
+  <label>Speed <select id="speed"><option value="0.0625">1/16x</option><option value="0.125" selected>1/8x</option><option value="0.25">1/4x</option><option value="1">1x</option></select></label>
+  <input id="time" type="range" min="0" max="0" value="0">
+  <span id="tlabel">t = 0.000 s</span>
+</div>
+<div class="info">
+  <div id="clipinfo"></div>
+  <div class="key"><span style="background:#ff8c1a"></span>real dot (tracked)<span style="background:#1f6feb"></span>simulated dot<span style="background:#555"></span>phone plate</div>
+</div>
+<div id="err">Could not load data.js. Run <code>python src/export_viewer.py</code> first, and keep data.js next to this file.</div>
+
+<script src="data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  const D = window.SPONGE_DATA;
+  if (!D || !window.THREE) { document.getElementById('err').style.display = 'block'; return; }
+  const canvas = document.getElementById('view');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio || 1);
+  const scene = new THREE.Scene();
+  const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+  scene.background = new THREE.Color(dark ? 0x16181c : 0xf4f4f2);
+  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 200);
+  camera.position.set(14, 10, 22);
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.target.set(0, 4.5, 0);
+  controls.update();
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.75); sun.position.set(6, 12, 9); scene.add(sun);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(14, 14),
+    new THREE.MeshLambertMaterial({ color: dark ? 0x2a2d33 : 0xdddddd }));
+  ground.rotation.x = -Math.PI / 2; scene.add(ground);
+
+  let sponge, edges, plate, realDots = [], simDots = [], clip, frame = 0, playing = true;
+  const sel = document.getElementById('clip');
+  Object.keys(D.clips).forEach(n => {
+    const o = document.createElement('option'); o.value = n;
+    o.textContent = n + ' (' + D.clips[n].role + ')'; sel.appendChild(o);
+  });
+  const testName = Object.keys(D.clips).find(n => D.clips[n].role === 'test');
+  if (testName) sel.value = testName;
+
+  function build(name) {
+    clip = D.clips[name];
+    [sponge, edges, plate].forEach(o => o && scene.remove(o));
+    realDots.concat(simDots).forEach(o => scene.remove(o));
+    realDots = []; simDots = [];
+    const tris = [];
+    clip.quads.forEach(q => { tris.push(q[0], q[1], q[2], q[0], q[2], q[3]); });
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(clip.nodes[0].length * 3), 3));
+    g.setIndex(tris);
+    sponge = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ color: 0xf0d75a, side: THREE.DoubleSide }));
+    scene.add(sponge);
+    const lines = [];
+    clip.quads.forEach(q => { for (let k = 0; k < 4; k++) lines.push(q[k], q[(k + 1) % 4]); });
+    const eg = new THREE.BufferGeometry();
+    eg.setAttribute('position', g.getAttribute('position'));
+    eg.setIndex(lines);
+    edges = new THREE.LineSegments(eg, new THREE.LineBasicMaterial({ color: 0x8a6d1a }));
+    scene.add(edges);
+    plate = new THREE.Mesh(new THREE.BoxGeometry(9, 0.25, clip.depth + 1.6),
+      new THREE.MeshLambertMaterial({ color: 0x444444, transparent: true, opacity: 0.55 }));
+    scene.add(plate);
+    const sph = new THREE.SphereGeometry(0.12, 12, 8);
+    for (let i = 0; i < clip.real_dots[0].length; i++) {
+      const r = new THREE.Mesh(sph, new THREE.MeshBasicMaterial({ color: 0xff8c1a }));
+      const s = new THREE.Mesh(sph, new THREE.MeshBasicMaterial({ color: 0x1f6feb }));
+      scene.add(r); scene.add(s); realDots.push(r); simDots.push(s);
+    }
+    const slider = document.getElementById('time');
+    slider.max = clip.t.length - 1; frame = 0;
+    const rms = clip.rms_cm != null ? clip.rms_cm.toFixed(2) + ' cm' : 'n/a';
+    document.getElementById('clipinfo').innerHTML =
+      '<b>' + name + '</b>, ' + clip.role + ' clip; dot error (rms over the clip) <b>' + rms +
+      '</b>; phone released at t = ' + clip.release_t.toFixed(3) + ' s.' +
+      (D.effective && D.effective.wobble_frequency_hz ? ' Fitted sway: <b>' +
+      D.effective.wobble_frequency_hz.toFixed(2) + ' Hz</b>, damping ratio <b>' +
+      D.effective.wobble_damping_ratio.toFixed(3) + '</b>.' : '');
+    show(0);
+  }
+
+  function show(f) {
+    frame = f;
+    const pos = sponge.geometry.getAttribute('position');
+    const nd = clip.nodes[f];
+    for (let i = 0; i < nd.length; i++) pos.setXYZ(i, nd[i][0], nd[i][1], nd[i][2]);
+    pos.needsUpdate = true;
+    sponge.geometry.computeVertexNormals();
+    sponge.geometry.computeBoundingSphere();
+    const zf = clip.depth / 2 + 0.05;
+    clip.real_dots[f].forEach((d, i) => realDots[i].position.set(d[0], d[1], zf));
+    clip.sim_dots[f].forEach((d, i) => simDots[i].position.set(d[0], d[1], zf + 0.02));
+    const pl = clip.plate[f];
+    plate.visible = pl[0] !== null && pl[0] < 30;
+    if (plate.visible) {
+      plate.position.set(0, pl[0] + 0.125, 0);
+      plate.rotation.z = -Math.atan(pl[1]);
+    }
+    document.getElementById('time').value = f;
+    const t = clip.t[f];
+    document.getElementById('tlabel').textContent = 't = ' + t.toFixed(3) + ' s' +
+      (t > clip.release_t ? '  (free)' : '  (pressing)');
+  }
+
+  sel.onchange = () => build(sel.value);
+  document.getElementById('time').oninput = e => { show(+e.target.value); };
+  document.getElementById('play').onclick = e => {
+    playing = !playing; e.target.textContent = playing ? 'Pause' : 'Play';
+  };
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+
+  let last = performance.now(), acc = 0;
+  function loop(now) {
+    const dt = (now - last) / 1000; last = now;
+    if (playing && clip) {
+      acc += dt * parseFloat(document.getElementById('speed').value);
+      const step = clip.t[1] - clip.t[0];
+      while (acc >= step) { acc -= step; show((frame + 1) % clip.t.length); }
+    }
+    controls.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+  }
+  build(sel.value); resize(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

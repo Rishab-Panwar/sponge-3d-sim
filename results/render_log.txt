@@ -1,0 +1,11 @@
+[clip1] wrote results/demo/clip1.mp4 and results/plots/clip1_traces.png
+[clip2] wrote results/demo/clip2.mp4 and results/plots/clip2_traces.png
+[clip3] wrote results/demo/clip3.mp4 and results/plots/clip3_traces.png
+[clip4] wrote results/demo/clip4.mp4 and results/plots/clip4_traces.png
+[clip5] wrote results/demo/clip5.mp4 and results/plots/clip5_traces.png
+[clip1] 319 frames
+[clip2] 188 frames
+[clip3] 207 frames
+[clip4] 150 frames
+[clip5] 201 frames
+wrote results/viewer/data.js (3.2 MB)

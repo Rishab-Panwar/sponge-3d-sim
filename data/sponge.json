@@ -1,0 +1,12 @@
+{
+  "_note": "Measured with a ruler (photos in data/measurements/). height = standing height, width = dotted face seen by the camera, thickness = depth toward the camera (not visible in the videos; read off thickness.jpg, about +/-0.2 cm).",
+  "height_cm": 9.5,
+  "width_cm": 2.0,
+  "thickness_cm": 7.4,
+  "mass_g": null,
+  "dot_grid": {
+    "rows": 5,
+    "cols": 2,
+    "_note": "marker layout on the visible face: evenly spaced rows x columns"
+  }
+}

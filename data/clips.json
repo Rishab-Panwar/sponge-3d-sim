@@ -1,0 +1,30 @@
+{
+  "_note": "capture_fps = real recording rate of the phone's slow-motion mode (the file itself is saved at ~30 fps for playback). Full-HD originals copied from Google Drive. role: 'fit' clips are used to fit the parameters, 'test' clips are never seen by the fit. use_trajectory=false: clip used for the wobble targets only, not the trajectory fit.",
+  "clip1": {
+    "file": "raw/clip1.mp4",
+    "capture_fps": 240,
+    "role": "fit"
+  },
+  "clip2": {
+    "file": "raw/clip2.mp4",
+    "capture_fps": 240,
+    "role": "fit"
+  },
+  "clip3": {
+    "file": "raw/clip3.mp4",
+    "capture_fps": 240,
+    "role": "fit",
+    "use_trajectory": false,
+    "_why": "extreme fold: the sponge folds onto itself, which the model cannot represent (no self-contact), and the simulation becomes chaotic there. Its free wobble is still used (stage A); its trajectories are reported as a stress test."
+  },
+  "clip4": {
+    "file": "raw/clip4.mp4",
+    "capture_fps": 240,
+    "role": "test"
+  },
+  "clip5": {
+    "file": "raw/clip5.mp4",
+    "capture_fps": 240,
+    "role": "test"
+  }
+}

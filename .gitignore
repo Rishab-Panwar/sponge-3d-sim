@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+*.pyc
+# tracking overlay videos are large debug output; regenerate with: python src/track.py --overlay
+results/tracking/

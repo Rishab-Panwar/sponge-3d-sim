@@ -1,0 +1,82 @@
+{
+  "model": "3D mass-spring grid",
+  "params": {
+    "k_axial": 50010.93609052269,
+    "k_shear": 20870.960544730533,
+    "zeta": 0.7984075974674946,
+    "mu": 1.6415824816068865,
+    "alpha": 12.957067349263058
+  },
+  "units": "per unit total mass: k in cm/s^2 per unit strain; zeta (spring dashpot ratio) and mu dimensionless; alpha in 1/s",
+  "effective": {
+    "wobble_frequency_hz": 13.139612553385104,
+    "wobble_damping_ratio": 0.11642228986915207,
+    "shear_to_axial_ratio": 0.41732793217373265
+  },
+  "targets_from_fit_clips": {
+    "f_n_hz": 13.139612553376367,
+    "zeta": 0.11642228986642052,
+    "per_clip": {
+      "clip1": {
+        "f_n_hz": 13.165129464133027,
+        "zeta": 0.13673489789421667,
+        "amplitude_cm": 0.1679901943625539
+      },
+      "clip2": {
+        "f_n_hz": 13.52311894662803,
+        "zeta": 0.07821947124485225,
+        "amplitude_cm": 0.05080930004785555
+      },
+      "clip3": {
+        "f_n_hz": 12.998755744231705,
+        "zeta": 0.10770469778991772,
+        "amplitude_cm": 0.1687691375865578
+      }
+    }
+  },
+  "test_clips_measured_wobble": {
+    "clip4": {
+      "f_n_hz": 13.349421866975941,
+      "zeta": 0.16097543176778933,
+      "amplitude_cm": 0.6143726920113158
+    }
+  },
+  "loss": {
+    "free_window_s": 0.25,
+    "w_free": 1.0
+  },
+  "fit": {
+    "clip1": {
+      "rms_cm": 0.4624451998453846,
+      "rms_cm_pressing": 0.5193541377099286,
+      "rms_cm_free_recovery": 0.32543825873071863,
+      "rms_cm_after_release": 0.2527521963312586,
+      "max_cm": 1.683246785934501
+    },
+    "clip2": {
+      "rms_cm": 0.25680730270541247,
+      "rms_cm_pressing": 0.2719422818202552,
+      "rms_cm_free_recovery": 0.16292037238349297,
+      "rms_cm_after_release": 0.16327700184025082,
+      "max_cm": 0.7982142500832967
+    }
+  },
+  "stress_test": {
+    "clip3": {
+      "rms_cm": 0.5295114907192451,
+      "rms_cm_pressing": 0.5547062850743315,
+      "rms_cm_free_recovery": 0.38895679100456676,
+      "rms_cm_after_release": 0.41492775534697485,
+      "max_cm": 1.190373826553223
+    }
+  },
+  "test": {
+    "clip4": {
+      "rms_cm": 0.34575314155069886,
+      "rms_cm_pressing": 0.38612395234969193,
+      "rms_cm_free_recovery": 0.23084852417812737,
+      "rms_cm_after_release": 0.20724095177131804,
+      "max_cm": 1.0731455377734864
+    }
+  }
+}
