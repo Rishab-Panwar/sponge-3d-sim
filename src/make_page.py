@@ -29,7 +29,12 @@ from sim import Params  # noqa: E402
 
 RES = os.path.join(ROOT, "results")
 PLOTS = os.path.join(RES, "plots")
-C_FIT, C_TEST, C_STRESS = "#4C78A8", "#E45756", "#9D9D9D"
+# palette of the results page: ink = fitting clips, orange = unseen test clips
+C_FIT, C_TEST, C_STRESS = "#383b36", "#ff7900", "#b8b6ae"
+plt.rcParams.update({"font.family": ["Inter", "DejaVu Sans"], "axes.edgecolor": "#64665f",
+                     "axes.labelcolor": "#17191d", "xtick.color": "#535650",
+                     "ytick.color": "#535650", "axes.facecolor": "#f9f8f4",
+                     "figure.facecolor": "#f9f8f4", "savefig.facecolor": "#f9f8f4"})
 
 
 def role_color(role):
@@ -102,7 +107,7 @@ def sway(wm, cfg, p):
         ax.legend(fontsize=8, loc="lower right")
         ax.spines[["top", "right"]].set_visible(False)
     axs[0].set_ylim(0, max(wm[n]["f_n_hz"] for n in names) * 1.2)
-    fig.suptitle("Measured sway after release (bars: blue/grey = used to fit the sway, red = unseen "
+    fig.suptitle("Measured sway after release (dark/grey = used to fit the sway, orange = unseen "
                  "test clips) vs the fitted model (dashed)", fontsize=10)
     plt.tight_layout()
     plt.savefig(os.path.join(PLOTS, "sway_comparison.png"), dpi=130)
@@ -124,8 +129,8 @@ def two_d_vs_three_d(cfg, p3):
     names = list(cfg)
     fig, ax = plt.subplots(figsize=(8, 3.2))
     x = np.arange(len(names))
-    ax.bar(x - 0.2, [out["2D"][n] for n in names], 0.4, color="#BBBBBB", label="2D side-view model")
-    ax.bar(x + 0.2, [out["3D"][n] for n in names], 0.4, color="#F2B701", label="3D model (used)")
+    ax.bar(x - 0.2, [out["2D"][n] for n in names], 0.4, color="#b8b6ae", label="2D side-view model")
+    ax.bar(x + 0.2, [out["3D"][n] for n in names], 0.4, color="#ff7900", label="3D model (used)")
     ax.set_xticks(x, [f"{n}\n({cfg[n]['role']})" for n in names])
     ax.set_ylabel("dot error, RMS [cm]")
     ax.set_title("2D vs 3D model, same data and method", fontsize=10)

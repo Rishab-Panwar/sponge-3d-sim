@@ -4,23 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sponge 3D Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#f4f4f2; --panel:#ffffff; --ink:#222; --muted:#666; --line:#ddd; --accent:#1f6feb; }
+  :root { --bg:#f5f3ee; --panel:#f9f8f4; --ink:#17191d; --muted:#64665f; --line:#d6d2c9; --accent:#ff7900;
+          --font-body:"Inter", system-ui, sans-serif; --font-data:"DM Mono", ui-monospace, monospace; }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --bg:#16181c; --panel:#1f2228; --ink:#e8e8e8; --muted:#9aa0a6; --line:#33373e; --accent:#58a6ff; }
+    :root:not([data-theme="light"]) { --bg:#0d131c; --panel:#131b26; --ink:#e8eaed; --muted:#9aa1ab; --line:#263142; }
   }
-  :root[data-theme="dark"] { --bg:#16181c; --panel:#1f2228; --ink:#e8e8e8; --muted:#9aa0a6; --line:#33373e; --accent:#58a6ff; }
+  :root[data-theme="dark"] { --bg:#0d131c; --panel:#131b26; --ink:#e8eaed; --muted:#9aa1ab; --line:#263142; }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.4 system-ui, sans-serif; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 var(--font-body); -webkit-font-smoothing:antialiased; }
   header { padding:12px 16px; border-bottom:1px solid var(--line); background:var(--panel); }
-  header h1 { font-size:17px; margin:0 0 2px; }
+  header h1 { font-size:17px; margin:0 0 2px; letter-spacing:-0.02em; font-weight:600; }
   header p { margin:0; color:var(--muted); font-size:13px; }
   #view { width:100%; height:62vh; min-height:320px; display:block; }
   .controls { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; padding:12px 16px;
               background:var(--panel); border-top:1px solid var(--line); }
-  .controls label { color:var(--muted); font-size:13px; }
-  select, button { font:inherit; padding:5px 10px; border:1px solid var(--line); border-radius:6px;
+  .controls label { color:var(--muted); font:500 11px/1 var(--font-data); letter-spacing:.08em; text-transform:uppercase; }
+  #tlabel { font:13px var(--font-data); color:var(--muted); }
+  select, button { font:inherit; padding:5px 12px; border:1px solid var(--line); border-radius:999px;
                    background:var(--bg); color:var(--ink); cursor:pointer; }
+  button#play { background:var(--accent); border-color:var(--accent); color:#17191d; font-weight:500; }
   input[type=range] { flex:1 1 220px; min-width:160px; accent-color:var(--accent); }
   .info { padding:10px 16px 16px; color:var(--muted); font-size:13px; }
   .info b { color:var(--ink); }
@@ -43,7 +49,7 @@
 </div>
 <div class="info">
   <div id="clipinfo"></div>
-  <div class="key"><span style="background:#ff8c1a"></span>real dot (tracked)<span style="background:#1f6feb"></span>simulated dot<span style="background:#555"></span>phone plate</div>
+  <div class="key"><span style="background:#ff7900"></span>real dot (tracked)<span style="background:#1f6feb"></span>simulated dot<span style="background:#555"></span>phone plate</div>
 </div>
 <div id="err">Could not load data.js. Run <code>python src/export_viewer.py</code> first, and keep data.js next to this file.</div>
 
@@ -59,7 +65,7 @@
   renderer.setPixelRatio(window.devicePixelRatio || 1);
   const scene = new THREE.Scene();
   const dark = matchMedia('(prefers-color-scheme: dark)').matches;
-  scene.background = new THREE.Color(dark ? 0x16181c : 0xf4f4f2);
+  scene.background = new THREE.Color(dark ? 0x0d131c : 0xf5f3ee);
   const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 200);
   camera.position.set(14, 10, 22);
   const controls = new THREE.OrbitControls(camera, canvas);
@@ -68,7 +74,7 @@
   scene.add(new THREE.AmbientLight(0xffffff, 0.55));
   const sun = new THREE.DirectionalLight(0xffffff, 0.75); sun.position.set(6, 12, 9); scene.add(sun);
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(14, 14),
-    new THREE.MeshLambertMaterial({ color: dark ? 0x2a2d33 : 0xdddddd }));
+    new THREE.MeshLambertMaterial({ color: dark ? 0x1a2330 : 0xe1ddd3 }));
   ground.rotation.x = -Math.PI / 2; scene.add(ground);
 
   let sponge, edges, plate, realDots = [], simDots = [], clip, frame = 0, playing = true;
@@ -104,7 +110,7 @@
     scene.add(plate);
     const sph = new THREE.SphereGeometry(0.12, 12, 8);
     for (let i = 0; i < clip.real_dots[0].length; i++) {
-      const r = new THREE.Mesh(sph, new THREE.MeshBasicMaterial({ color: 0xff8c1a }));
+      const r = new THREE.Mesh(sph, new THREE.MeshBasicMaterial({ color: 0xff7900 }));
       const s = new THREE.Mesh(sph, new THREE.MeshBasicMaterial({ color: 0x1f6feb }));
       scene.add(r); scene.add(s); realDots.push(r); simDots.push(s);
     }
